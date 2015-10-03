@@ -13,7 +13,7 @@ class PgInheritsSuite extends FunSuite {
   abstract class BaseT[T](tag: Tag, tname: String = "test_tab1") extends Table[T](tag, tname) {
     def col1 = column[String]("COL1")
     def col2 = column[String]("COL2")
-    def col3 = column[String]("COL3")
+    def col3 = column[String]("COL3", O.SqlType("citext"))
     def col4 = column[Int]("COL4", O.PrimaryKey)
   }
 
@@ -69,9 +69,11 @@ class PgInheritsSuite extends FunSuite {
             ) === r)
           )
         )
-      ).andFinally(
-        (tabs1.schema ++ tabs2.schema) drop
-      ).transactionally
+      )
+//        .andFinally(
+//        (tabs1.schema ++ tabs2.schema) drop
+//      )
+        .transactionally
     ), Duration.Inf)
   }
 }
