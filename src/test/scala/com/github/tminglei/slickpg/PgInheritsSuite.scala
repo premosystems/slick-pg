@@ -52,7 +52,7 @@ class PgInheritsSuite extends FunSuite {
         )
       ).andThen(
         DBIO.seq(
-          tabs1.sortBy(_.col4).to[List].result.map(
+          tabs1.filter(_.col3 === "BAT").sortBy(_.col4).to[List].result.map(
             r => assert(Seq(
               Tab1("foo", "bar",  "bat", 1),
               Tab1("foo", "bar",  "bat", 2),
@@ -69,11 +69,9 @@ class PgInheritsSuite extends FunSuite {
             ) === r)
           )
         )
-      )
-//        .andFinally(
-//        (tabs1.schema ++ tabs2.schema) drop
-//      )
-        .transactionally
+      ).andFinally(
+        (tabs1.schema ++ tabs2.schema) drop
+      ).transactionally
     ), Duration.Inf)
   }
 }
