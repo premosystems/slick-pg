@@ -36,6 +36,7 @@ class PgInheritsSuite extends FunSuite {
   val tabs2 = TableQuery(new Tabs2(_))
 
   test("Inherits support") {
+    val compiled = Compiled { s: Rep[String] => tabs1.filter(_.col3 === s.asColumnOfType[String]("citext")).sortBy(_.col4).to[List] }
     Await.result(db.run(
       DBIO.seq(
         (tabs1.schema ++ tabs2.schema) create,
@@ -53,6 +54,16 @@ class PgInheritsSuite extends FunSuite {
       ).andThen(
         DBIO.seq(
           tabs1.filter(_.col3 === "BAT").sortBy(_.col4).to[List].result.map(
+            r => assert(Seq(
+              Tab1("foo", "bar",  "bat", 1),
+              Tab1("foo", "bar",  "bat", 2),
+              Tab1("foo", "quux", "bat", 3),
+              Tab1("baz", "quux", "bat", 4),
+              Tab1("plus", "bar",  "bat", 5),
+              Tab1("plus", "quux", "bat", 6)
+            ) === r)
+          ),
+          compiled("BAT").result.map(
             r => assert(Seq(
               Tab1("foo", "bar",  "bat", 1),
               Tab1("foo", "bar",  "bat", 2),
