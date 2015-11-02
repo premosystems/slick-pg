@@ -17,8 +17,8 @@ trait CompaniesComponent { self: HasDatabaseConfig[MyPostgresDriver] =>
     def id = column[Long]("ID", O.PrimaryKey, O.AutoInc)
     def name = column[String]("NAME")
     def props = column[JsValue]("PROPS")
-
-    def * = (id.?, name, props) <> (Company.tupled, Company.unapply _)
+    def userIds = column[List[Int]]("USER_IDS")
+    def * = (id.?, name, props, userIds) <> (Company.tupled, Company.unapply _)
   }
 }
 
@@ -45,4 +45,8 @@ class CompaniesDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   /** Insert new companies */
   def insert(companies: Seq[Company]): Future[Unit] =
     db.run(this.companies ++= companies).map(_ => ())
+
+  /** Find matching companies */
+  def find(userId: Int): Future[Unit] =
+    db.run(companies.filter(company => company.userIds @> userId).result)
 }

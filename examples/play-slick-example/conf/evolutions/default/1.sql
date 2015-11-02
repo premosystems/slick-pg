@@ -4,6 +4,7 @@ CREATE TABLE "COMPANY" (
     "ID" bigserial NOT NULL,
     "NAME" text,
     "PROPS" jsonb,
+    "USER_IDS" integer[],
     PRIMARY KEY ("ID")
 );
 

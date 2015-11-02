@@ -11,7 +11,8 @@ case class Page[A](items: Seq[A], page: Int, offset: Long, total: Long) {
 case class Company(
   id: Option[Long],
   name: String,
-  props: JsValue)
+  props: JsValue,
+  userIds:List[Int])
 
 case class Computer(
   id: Option[Long] = None,
