@@ -49,4 +49,6 @@ class CompaniesDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvi
   /** Find matching companies */
   def find(userId: Int): Future[Unit] =
     db.run(companies.filter(company => company.userIds @> userId).result)
+
+  // db.run(companies.filter(company =>  userId === company.userIds.any).result) // also fails :(
 }
